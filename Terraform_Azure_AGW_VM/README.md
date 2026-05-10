@@ -8,16 +8,16 @@ Deploys a production-ready Azure infrastructure using Terraform modules, support
 Internet
    │
    ▼
-Application Gateway (AGW)   ← public endpoint, routes HTTP/HTTPS traffic
+Application Gateway (AGW)
    │
    ▼
-Virtual Machine (VM)        ← private subnet, no public IP
+Virtual Machine (VM)
    │
    ├── Data Disk 1
    └── Data Disk 2
 
-Azure Bastion               ← secure RDP/SSH access without public IP
-Azure Key Vault             ← stores VM admin password
+Azure Bastion
+Azure Key Vault
 ```
 
 ## Infrastructure Components
