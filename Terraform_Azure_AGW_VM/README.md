@@ -5,19 +5,25 @@ Deploys a production-ready Azure infrastructure using Terraform modules, support
 ## Architecture
 
 ```
-Internet
-   │
-   ▼
-Application Gateway (AGW)
-   │
-   ▼
-Virtual Machine (VM)
-   │
-   ├── Data Disk 1
-   └── Data Disk 2
-
-Azure Bastion
-Azure Key Vault
+tf-azure-local/
+├── envs/
+│   ├── qa/
+│   │   ├── main.tf          ← Provider + modules + VNet + Subnets
+│   │   ├── variables.tf     ← Ορισμός μεταβλητών QA
+│   │   ├── terraform.tfvars ← Τιμές QA (αυτό αλλάζεις)
+│   │   └── outputs.tf       ← IPs μετά το apply
+│   └── prod/
+│       ├── main.tf          ← ίδιο με qa
+│       ├── variables.tf     ← Ορισμός μεταβλητών PROD
+│       ├── terraform.tfvars ← Τιμές PROD (αυτό αλλάζεις)
+│       └── outputs.tf       ← IPs μετά το apply
+└── modules/
+    ├── rg/                  ← Resource Group
+    ├── keyvault/            ← Key Vault + Secret
+    ├── vm/                  ← NIC + VM
+    ├── disk/                ← Managed Disk + Attachment
+    ├── agw/                 ← Public IP + Application Gateway
+    └── bastion/             ← Public IP + Bastion Host
 ```
 
 ## Infrastructure Components
