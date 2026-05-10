@@ -79,9 +79,3 @@ terraform plan
 terraform apply -auto-approve
 ```
 
-## Requirements
-
-- Terraform >= 1.0
-- Azure CLI authenticated (`az login`)
-- Azure subscription with Contributor access
-- AzureRM provider `~> 3.0`
