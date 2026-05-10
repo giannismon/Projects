@@ -38,6 +38,24 @@ Terraform creates resources in this order based on dependencies:
 6. **Application Gateway** — requires the AGW subnet and VM private IP
 7. **Azure Bastion** — requires the Bastion subnet
 
+## Terraform Flow
+
+```
+terraform.tfvars
+    ↓
+root variables.tf
+    ↓
+root main.tf
+    ↓
+module block
+    ↓
+child module variables.tf
+    ↓
+child module main.tf
+    ↓
+resource
+```
+
 ## Infrastructure Components
 
 | Module | Resource | Description |
