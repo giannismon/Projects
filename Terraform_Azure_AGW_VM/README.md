@@ -9,14 +9,14 @@ tf-azure-local/
 ├── envs/
 │   ├── qa/
 │   │   ├── main.tf          ← Provider + modules + VNet + Subnets
-│   │   ├── variables.tf     ← Ορισμός μεταβλητών QA
-│   │   ├── terraform.tfvars ← Τιμές QA (αυτό αλλάζεις)
-│   │   └── outputs.tf       ← IPs μετά το apply
+│   │   ├── variables.tf     ← Variable definitions for QA
+│   │   ├── terraform.tfvars ← QA values (edit this)
+│   │   └── outputs.tf       ← IPs after apply
 │   └── prod/
-│       ├── main.tf          ← ίδιο με qa
-│       ├── variables.tf     ← Ορισμός μεταβλητών PROD
-│       ├── terraform.tfvars ← Τιμές PROD (αυτό αλλάζεις)
-│       └── outputs.tf       ← IPs μετά το apply
+│       ├── main.tf          ← same as qa
+│       ├── variables.tf     ← Variable definitions for PROD
+│       ├── terraform.tfvars ← PROD values (edit this)
+│       └── outputs.tf       ← IPs after apply
 └── modules/
     ├── rg/                  ← Resource Group
     ├── keyvault/            ← Key Vault + Secret
