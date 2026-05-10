@@ -8,7 +8,7 @@ kv_name = "kv-p44010-prod"
 ################################## Virtual Machine ##################################
 vm_name        = "prod"
 admin_username = "azureuser"
-admin_password = "<YOUR_ADMIN_PASSWORD>"
+admin_password = "P@ssw0rd1234!"
 vm_size        = "Standard_D2s_v3"
 private_ip     = "10.0.1.10"
 

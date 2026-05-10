@@ -8,7 +8,7 @@ kv_name = "kv-p44010-qa"
 ################################## Virtual Machine ##################################
 vm_name        = "qa"
 admin_username = "azureuser"
-admin_password = "<YOUR_ADMIN_PASSWORD>"
+admin_password = "P@ssw0rd1234!"
 vm_size        = "Standard_B1s"
 private_ip     = "10.0.1.10"
 
