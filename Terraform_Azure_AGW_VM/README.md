@@ -8,22 +8,40 @@ Deploys a production-ready Azure infrastructure using Terraform modules, support
 tf-azure-local/
 ├── envs/
 │   ├── qa/
-│   │   ├── main.tf          ← Provider + modules + VNet + Subnets
-│   │   ├── variables.tf     ← Variable definitions for QA
-│   │   ├── terraform.tfvars ← QA values (edit this)
-│   │   └── outputs.tf       ← IPs after apply
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   └── outputs.tf
 │   └── prod/
-│       ├── main.tf          ← same as qa
-│       ├── variables.tf     ← Variable definitions for PROD
-│       ├── terraform.tfvars ← PROD values (edit this)
-│       └── outputs.tf       ← IPs after apply
+│       ├── main.tf
+│       ├── variables.tf
+│       ├── terraform.tfvars
+│       └── outputs.tf
 └── modules/
-    ├── rg/                  ← Resource Group
-    ├── keyvault/            ← Key Vault + Secret
-    ├── vm/                  ← NIC + VM
-    ├── disk/                ← Managed Disk + Attachment
-    ├── agw/                 ← Public IP + Application Gateway
-    └── bastion/             ← Public IP + Bastion Host
+    ├── rg/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    ├── keyvault/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    ├── vm/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    ├── disk/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    ├── agw/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    └── bastion/
+        ├── main.tf
+        ├── variables.tf
+        └── outputs.tf
 ```
 
 ## Deployment Order
