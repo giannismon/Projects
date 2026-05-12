@@ -22,11 +22,11 @@ tf-azure-local/
     │   ├── main.tf
     │   ├── variables.tf
     │   └── outputs.tf
-    ├── networking/
+    ├── keyvault/
     │   ├── main.tf
     │   ├── variables.tf
     │   └── outputs.tf
-    ├── keyvault/
+    ├── networking/
     │   ├── main.tf
     │   ├── variables.tf
     │   └── outputs.tf
