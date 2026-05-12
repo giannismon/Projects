@@ -1,36 +1,29 @@
 variable "rg_name" {
-  type    = string
-  default = "rg-p44010-prod"
+  type = string
 }
 
 variable "location" {
-  type    = string
-  default = "West Europe"
+  type = string
 }
 
 variable "tags" {
-  type    = map(string)
-  default = {}
+  type = map(string)
 }
 
 variable "kv_name" {
-  type    = string
-  default = "kv-p44010-prod"
+  type = string
 }
 
 variable "vm_name" {
-  type    = string
-  default = "prod"
+  type = string
 }
 
 variable "vm_size" {
-  type    = string
-  default = "Standard_D2s_v3"
+  type = string
 }
 
 variable "admin_username" {
-  type    = string
-  default = "azureuser"
+  type = string
 }
 
 variable "admin_password" {
@@ -39,26 +32,21 @@ variable "admin_password" {
 }
 
 variable "private_ip" {
-  type    = string
-  default = "10.0.1.10"
+  type = string
 }
 
 variable "disk_size_gb" {
-  type    = number
-  default = 100
+  type = number
 }
 
 variable "disk_type" {
-  type    = string
-  default = "Premium_LRS"
+  type = string
 }
 
 variable "disk2_size_gb" {
-  type    = number
-  default = 50
+  type = number
 }
 
 variable "disk2_type" {
-  type    = string
-  default = "Premium_LRS"
+  type = string
 }
