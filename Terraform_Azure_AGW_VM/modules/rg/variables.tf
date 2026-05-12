@@ -3,11 +3,9 @@ variable "rg_name" {
 }
 
 variable "location" {
-  type    = string
-  default = "West Europe"
+  type = string
 }
 
 variable "tags" {
-  type    = map(string)
-  default = {}
+  type = map(string)
 }

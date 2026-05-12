@@ -15,17 +15,13 @@ variable "vm_id" {
 }
 
 variable "disk_size_gb" {
-  type    = number
-  default = 100
+  type = number
 }
 
 variable "disk_type" {
-  type    = string
-  default = "Standard_LRS"
-  # Options: Standard_LRS, StandardSSD_LRS, Premium_LRS
+  type = string
 }
 
 variable "lun" {
-  type    = number
-  default = 0
+  type = number
 }
