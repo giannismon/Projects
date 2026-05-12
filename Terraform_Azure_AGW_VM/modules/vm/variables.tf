@@ -15,18 +15,15 @@ variable "subnet_id" {
 }
 
 variable "private_ip" {
-  type    = string
-  default = "10.0.1.10"
+  type = string
 }
 
 variable "vm_size" {
-  type    = string
-  default = "Standard_B1s"
+  type = string
 }
 
 variable "admin_username" {
-  type    = string
-  default = "example_user"
+  type = string
 }
 
 variable "admin_password" {
