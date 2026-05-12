@@ -22,6 +22,10 @@ tf-azure-local/
     │   ├── main.tf
     │   ├── variables.tf
     │   └── outputs.tf
+    ├── networking/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
     ├── keyvault/
     │   ├── main.tf
     │   ├── variables.tf
@@ -50,8 +54,8 @@ Terraform creates resources in this order based on dependencies:
 
 1. **Resource Group** — everything else depends on it
 2. **Key Vault** — stores the VM admin password
-3. **Virtual Network + Subnets** — networking foundation for all resources
-4. **Virtual Machine** — uses the subnet and retrieves password from Key Vault
+3. **Networking** — VNet and 3 subnets (VM, AGW, Bastion)
+4. **Virtual Machine** — uses the VM subnet and retrieves password from Key Vault
 5. **Managed Disks (x2)** — attached to the VM after it is created
 6. **Application Gateway** — requires the AGW subnet and VM private IP
 7. **Azure Bastion** — requires the Bastion subnet
@@ -61,11 +65,12 @@ Terraform creates resources in this order based on dependencies:
 | Module | Resource | Description |
 |---|---|---|
 | `rg` | Resource Group | Groups all resources per environment |
+| `networking` | VNet + Subnets | Virtual network and 3 subnets (VM, AGW, Bastion) |
+| `keyvault` | Key Vault | Stores and retrieves VM credentials |
 | `vm` | Windows/Linux VM | Application server in private subnet |
 | `disk` | Managed Disk | Additional data disks attached to VM |
 | `agw` | Application Gateway | Public-facing reverse proxy |
 | `bastion` | Azure Bastion | Secure private access to VM |
-| `keyvault` | Key Vault | Stores and retrieves VM credentials |
 
 ## Environments
 
