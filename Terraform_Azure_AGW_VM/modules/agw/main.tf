@@ -6,10 +6,49 @@ resource "azurerm_public_ip" "agw_pip" {
   sku                 = "Standard"
 }
 
+resource "azurerm_web_application_firewall_policy" "waf_policy" {
+  name                = "waf-policy-p44010"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+
+  custom_rules {
+    name      = "deny-specific-ip"
+    priority  = 1
+    rule_type = "MatchRule"
+    action    = "Block"
+
+    match_conditions {
+      match_variables {
+        variable_name = "RemoteAddr"
+      }
+      operator           = "IPMatch"
+      negation_condition = false
+      match_values       = ["203.0.113.99/32"]
+    }
+  }
+
+  policy_settings {
+    enabled                     = true
+    mode                        = "Prevention"
+    request_body_check          = true
+    file_upload_limit_in_mb     = 100
+    max_request_body_size_in_kb = 128
+  }
+
+  managed_rules {
+    managed_rule_set {
+      type    = "OWASP"
+      version = "3.2"
+    }
+  }
+}
+
 resource "azurerm_application_gateway" "agw" {
   name                = "agw-p44010-${var.agw_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
+
+  firewall_policy_id = azurerm_web_application_firewall_policy.waf_policy.id
 
   ssl_policy {
     policy_type = "Predefined"
@@ -17,8 +56,8 @@ resource "azurerm_application_gateway" "agw" {
   }
 
   sku {
-    name     = "Standard_v2"
-    tier     = "Standard_v2"
+    name     = "WAF_v2"
+    tier     = "WAF_v2"
     capacity = 1
   }
 
