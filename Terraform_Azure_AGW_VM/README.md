@@ -1,6 +1,6 @@
 # Terraform Azure AGW + VM
 
-Deploys a production-ready Azure infrastructure using Terraform modules, supporting both **QA** and **PROD** environments. The setup includes an Application Gateway as a reverse proxy in front of a Windows/Linux VM, secured with Azure Bastion for private access and Key Vault for secret management.
+Deploys a production-ready Azure infrastructure using Terraform modules, supporting both **QA** and **PROD** environments. The setup includes an Application Gateway (WAF_v2) as a reverse proxy in front of a Windows/Linux VM, secured with Azure Bastion for private access, Key Vault for secret management, and a WAF Policy for IP blocking and OWASP protection.
 
 ## Architecture
 
@@ -53,24 +53,33 @@ tf-azure-local/
 Terraform creates resources in this order based on dependencies:
 
 1. **Resource Group** — everything else depends on it
-2. **Key Vault** — stores the VM admin password
-3. **Networking** — VNet and 3 subnets (VM, AGW, Bastion)
-4. **Virtual Machine** — uses the VM subnet and retrieves password from Key Vault
-5. **Managed Disks (x2)** — attached to the VM after it is created
-6. **Application Gateway** — requires the AGW subnet and VM private IP
-7. **Azure Bastion** — requires the Bastion subnet
+2. **Key Vault** + **Networking** — parallel, no dependency between them
+3. **Virtual Machine** — requires VM subnet (networking) and password (Key Vault)
+4. **Managed Disks (x2)** — parallel, attached to the VM after it is created
+5. **Application Gateway (WAF_v2)** — requires AGW subnet and VM private IP
+6. **Azure Bastion** — requires the Bastion subnet
 
 ## Infrastructure Components
 
 | Module | Resource | Description |
 |---|---|---|
 | `rg` | Resource Group | Groups all resources per environment |
-| `networking` | VNet + Subnets | Virtual network and 3 subnets (VM, AGW, Bastion) |
 | `keyvault` | Key Vault | Stores and retrieves VM credentials |
-| `vm` | Windows/Linux VM | Application server in private subnet |
-| `disk` | Managed Disk | Additional data disks attached to VM |
-| `agw` | Application Gateway | Public-facing reverse proxy |
-| `bastion` | Azure Bastion | Secure private access to VM |
+| `networking` | VNet + 3 Subnets | VM subnet, AGW subnet, Bastion subnet |
+| `vm` | Virtual Machine | Application server in private subnet, no public IP |
+| `disk` | Managed Disk (x2) | Additional data disks attached to the VM |
+| `agw` | Application Gateway WAF_v2 + WAF Policy | Public-facing reverse proxy with IP blocking and OWASP 3.2 rules |
+| `bastion` | Azure Bastion | Secure RDP/SSH access without public IP |
+
+## Security
+
+The AGW runs as **WAF_v2** with a linked WAF Policy that provides:
+
+- **Custom rule** — blocks specific IPs before they reach the AGW
+- **OWASP 3.2 managed rules** — protects against SQL injection, XSS and other common attacks
+- **Prevention mode** — blocks immediately, does not just log
+
+IP blocking is handled at the WAF level because the VM never sees the original client IP — it only sees the AGW private IP. Blocking at NSG level on the VM subnet would have no effect.
 
 ## Environments
 
@@ -113,4 +122,3 @@ terraform init
 terraform plan
 terraform apply -auto-approve
 ```
-
