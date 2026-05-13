@@ -23,6 +23,12 @@ module "rg" {
   tags     = var.tags
 }
 
+resource "azurerm_user_assigned_identity" "agw_identity" {
+  name                = "id-agw-p44010"
+  resource_group_name = module.rg.rg_name
+  location            = module.rg.rg_location
+}
+
 module "keyvault" {
   source = "../../modules/keyvault"
 
@@ -30,6 +36,7 @@ module "keyvault" {
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
   admin_password      = var.admin_password
+  agw_principal_id    = azurerm_user_assigned_identity.agw_identity.principal_id
 }
 
 module "networking" {
@@ -79,11 +86,13 @@ module "disk2" {
 module "agw" {
   source = "../../modules/agw"
 
-  agw_name            = "main"
-  resource_group_name = module.rg.rg_name
-  location            = module.rg.rg_location
-  agw_subnet_id       = module.networking.agw_subnet_id
-  vm_private_ip       = module.vm.private_ip
+  agw_name                  = "main"
+  resource_group_name       = module.rg.rg_name
+  location                  = module.rg.rg_location
+  agw_subnet_id             = module.networking.agw_subnet_id
+  vm_private_ip             = module.vm.private_ip
+  ssl_certificate_secret_id = module.keyvault.ssl_certificate_secret_id
+  identity_id               = azurerm_user_assigned_identity.agw_identity.id
 }
 
 module "bastion" {
