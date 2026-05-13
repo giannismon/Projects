@@ -17,3 +17,11 @@ variable "agw_subnet_id" {
 variable "vm_private_ip" {
   type = string
 }
+
+variable "ssl_certificate_secret_id" {
+  type = string
+}
+
+variable "identity_id" {
+  type = string
+}

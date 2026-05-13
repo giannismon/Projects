@@ -50,6 +50,11 @@ resource "azurerm_application_gateway" "agw" {
 
   firewall_policy_id = azurerm_web_application_firewall_policy.waf_policy.id
 
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [var.identity_id]
+  }
+
   ssl_policy {
     policy_type = "Predefined"
     policy_name = "AppGwSslPolicy20220101"
@@ -76,6 +81,16 @@ resource "azurerm_application_gateway" "agw" {
     port = 80
   }
 
+  frontend_port {
+    name = "port-443"
+    port = 443
+  }
+
+  ssl_certificate {
+    name                = "agw-ssl-cert"
+    key_vault_secret_id = var.ssl_certificate_secret_id
+  }
+
   backend_address_pool {
     name         = "agw-backend-pool"
     ip_addresses = [var.vm_private_ip]
@@ -90,17 +105,41 @@ resource "azurerm_application_gateway" "agw" {
   }
 
   http_listener {
-    name                           = "agw-listener"
+    name                           = "listener-http"
     frontend_ip_configuration_name = "agw-frontend-ip"
     frontend_port_name             = "port-80"
     protocol                       = "Http"
   }
 
+  http_listener {
+    name                           = "listener-https"
+    frontend_ip_configuration_name = "agw-frontend-ip"
+    frontend_port_name             = "port-443"
+    protocol                       = "Https"
+    ssl_certificate_name           = "agw-ssl-cert"
+  }
+
+  redirect_configuration {
+    name                 = "redirect-http-to-https"
+    redirect_type        = "Permanent"
+    target_listener_name = "listener-https"
+    include_path         = true
+    include_query_string = true
+  }
+
   request_routing_rule {
-    name                       = "agw-routing-rule"
+    name                        = "rule-http-redirect"
+    rule_type                   = "Basic"
+    priority                    = 100
+    http_listener_name          = "listener-http"
+    redirect_configuration_name = "redirect-http-to-https"
+  }
+
+  request_routing_rule {
+    name                       = "rule-https"
     rule_type                  = "Basic"
-    priority                   = 100
-    http_listener_name         = "agw-listener"
+    priority                   = 200
+    http_listener_name         = "listener-https"
     backend_address_pool_name  = "agw-backend-pool"
     backend_http_settings_name = "agw-http-settings"
   }
