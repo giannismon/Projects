@@ -12,7 +12,7 @@ resource "azurerm_web_application_firewall_policy" "waf_policy" {
   location            = var.location
 
   custom_rules {
-    name      = "deny-specific-ip"
+    name      = "DenySpecificIP"
     priority  = 1
     rule_type = "MatchRule"
     action    = "Block"
