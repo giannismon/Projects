@@ -15,5 +15,5 @@ output "get_credentials" {
 }
 
 output "get_password" {
-  value = "az keyvault secret show --vault-name ${module.keyvault.key_vault_name} --subscription 903ad9f0-00e9-470f-9a53-d430f73dcd0d --name postgres-password --query value -o tsv"
+  value = "az keyvault secret show --vault-name ${module.keyvault.key_vault_name} --name postgres-password --query value -o tsv"
 }

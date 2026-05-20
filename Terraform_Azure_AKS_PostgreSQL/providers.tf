@@ -16,10 +16,3 @@ terraform {
 provider "azurerm" {
   features {}
 }
-
-# Key Vault is deployed to a separate subscription
-provider "azurerm" {
-  alias           = "kv_sub"
-  subscription_id = "903ad9f0-00e9-470f-9a53-d430f73dcd0d"
-  features {}
-}

@@ -6,15 +6,10 @@ terraform {
   }
 }
 
-resource "azurerm_resource_group" "kv" {
-  name     = "rg-${var.prefix}-kv"
-  location = var.location
-}
-
 resource "azurerm_key_vault" "main" {
   name                       = "kv-${var.prefix}-${var.suffix}"
-  location                   = azurerm_resource_group.kv.location
-  resource_group_name        = azurerm_resource_group.kv.name
+  location                   = var.location
+  resource_group_name        = var.resource_group_name
   tenant_id                  = var.tenant_id
   sku_name                   = "standard"
   enable_rbac_authorization  = false

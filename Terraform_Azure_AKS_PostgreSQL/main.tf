@@ -44,11 +44,10 @@ module "network" {
 module "keyvault" {
   source = "./modules/keyvault"
 
-  providers = { azurerm = azurerm.kv_sub }
-
   prefix                    = var.prefix
   location                  = var.location
   suffix                    = random_string.suffix.result
+  resource_group_name       = azurerm_resource_group.main.name
   tenant_id                 = data.azurerm_client_config.current.tenant_id
   tf_principal_id           = data.azurerm_client_config.current.object_id
   app_identity_principal_id = azurerm_user_assigned_identity.app.principal_id
