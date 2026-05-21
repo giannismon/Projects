@@ -39,7 +39,7 @@ resource "kubernetes_deployment" "app" {
           image = "mcr.microsoft.com/azure-cli:latest"
           command = [
             "/bin/sh", "-c",
-            "az login --federated-token \"$(cat $AZURE_FEDERATED_TOKEN_FILE)\" --service-principal -u $AZURE_CLIENT_ID -t $AZURE_TENANT_ID --allow-no-subscriptions --output none && export MY_SECRET=$(az keyvault secret show --vault-name ${module.keyvault.key_vault_name} --name my-secret --query value -o tsv) && echo MY_SECRET=$MY_SECRET && sleep infinity"
+            "az login --federated-token \"$(cat $AZURE_FEDERATED_TOKEN_FILE)\" --service-principal -u $AZURE_CLIENT_ID -t $AZURE_TENANT_ID --allow-no-subscriptions --output none && export MY_SECRET=$(az keyvault secret show --id https://${module.keyvault.key_vault_name}.vault.azure.net/secrets/my-secret --query value -o tsv) && echo MY_SECRET=$MY_SECRET && sleep infinity"
           ]
         }
       }
