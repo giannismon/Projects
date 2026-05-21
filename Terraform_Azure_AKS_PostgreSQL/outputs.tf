@@ -7,5 +7,5 @@ output "get_credentials" {
 }
 
 output "verify_secret" {
-  value = "kubectl exec pod/app -- printenv MY_SECRET"
+  value = "kubectl logs pod/app"
 }
