@@ -8,25 +8,41 @@ resource "kubernetes_service_account" "app" {
   }
 }
 
-resource "kubernetes_pod" "app" {
+resource "kubernetes_deployment" "app" {
   metadata {
     name      = "app"
     namespace = "default"
-    labels = {
-      "azure.workload.identity/use" = "true"
-    }
   }
 
   spec {
-    service_account_name = kubernetes_service_account.app.metadata[0].name
+    replicas = 1
 
-    container {
-      name  = "app"
-      image = "mcr.microsoft.com/azure-cli:latest"
-      command = [
-        "/bin/sh", "-c",
-        "az login --federated-token \"$(cat $AZURE_FEDERATED_TOKEN_FILE)\" --service-principal -u $AZURE_CLIENT_ID -t $AZURE_TENANT_ID --allow-no-subscriptions --output none && export MY_SECRET=$(az keyvault secret show --vault-name ${module.keyvault.key_vault_name} --name my-secret --query value -o tsv) && echo MY_SECRET=$MY_SECRET && sleep infinity"
-      ]
+    selector {
+      match_labels = {
+        app = "app"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app                          = "app"
+          "azure.workload.identity/use" = "true"
+        }
+      }
+
+      spec {
+        service_account_name = kubernetes_service_account.app.metadata[0].name
+
+        container {
+          name  = "app"
+          image = "mcr.microsoft.com/azure-cli:latest"
+          command = [
+            "/bin/sh", "-c",
+            "az login --federated-token \"$(cat $AZURE_FEDERATED_TOKEN_FILE)\" --service-principal -u $AZURE_CLIENT_ID -t $AZURE_TENANT_ID --allow-no-subscriptions --output none && export MY_SECRET=$(az keyvault secret show --vault-name ${module.keyvault.key_vault_name} --name my-secret --query value -o tsv) && echo MY_SECRET=$MY_SECRET && sleep infinity"
+          ]
+        }
+      }
     }
   }
 }

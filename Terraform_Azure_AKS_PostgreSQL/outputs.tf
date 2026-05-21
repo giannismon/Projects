@@ -7,5 +7,5 @@ output "get_credentials" {
 }
 
 output "verify_secret" {
-  value = "kubectl logs pod/app"
+  value = "kubectl logs deployment/app"
 }
