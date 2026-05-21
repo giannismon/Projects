@@ -22,13 +22,13 @@ resource "azurerm_resource_group" "main" {
 }
 
 resource "azurerm_user_assigned_identity" "aks" {
-  name                = "id-${var.prefix}-cluster"
+  name                = "id-aks-${var.prefix}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 }
 
 resource "azurerm_user_assigned_identity" "app" {
-  name                = "id-${var.prefix}-app"
+  name                = "id-psql-${var.prefix}-${random_string.suffix.result}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 }
