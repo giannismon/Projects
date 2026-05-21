@@ -23,9 +23,6 @@ resource "azurerm_kubernetes_cluster" "main" {
     dns_service_ip = "10.1.0.10"
   }
 
-  key_vault_secrets_provider {
-    secret_rotation_enabled = false
-  }
 }
 
 # Links the AKS OIDC issuer to the managed identity for Workload Identity
