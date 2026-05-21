@@ -17,3 +17,15 @@ output "get_credentials" {
 output "get_password" {
   value = "az keyvault secret show --vault-name ${module.keyvault.key_vault_name} --name postgres-password --query value -o tsv"
 }
+
+output "vm_public_ip" {
+  value = module.vm.public_ip_address
+}
+
+output "vm_ssh" {
+  value = "ssh azureuser@${module.vm.public_ip_address}"
+}
+
+output "get_vm_password" {
+  value = "az keyvault secret show --vault-name ${module.keyvault.key_vault_name} --name vm-admin-password --query value -o tsv"
+}
