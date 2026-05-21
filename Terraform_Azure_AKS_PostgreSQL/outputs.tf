@@ -6,6 +6,6 @@ output "get_credentials" {
   value = "az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${module.aks.cluster_name}"
 }
 
-output "check_logs" {
-  value = "kubectl logs job/test-secret"
+output "verify_secret" {
+  value = "kubectl exec pod/app -- printenv MY_SECRET"
 }
