@@ -6,6 +6,16 @@ resource "random_string" "suffix" {
   upper   = false
 }
 
+resource "random_password" "vm_admin" {
+  length           = 20
+  special          = true
+  override_special = "!#$%&*-_=+"
+  min_upper        = 2
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+}
+
 resource "random_password" "postgres" {
   length           = 20
   special          = true
@@ -52,6 +62,7 @@ module "keyvault" {
   tf_principal_id           = data.azurerm_client_config.current.object_id
   app_identity_principal_id = azurerm_user_assigned_identity.app.principal_id
   postgres_password         = random_password.postgres.result
+  vm_admin_password         = random_password.vm_admin.result
 }
 
 module "postgres" {
@@ -64,6 +75,16 @@ module "postgres" {
   subnet_id           = module.network.postgres_subnet_id
   private_dns_zone_id = module.network.postgres_dns_zone_id
   password            = random_password.postgres.result
+}
+
+module "vm" {
+  source = "./modules/vm"
+
+  prefix              = var.prefix
+  location            = var.location
+  resource_group_name = azurerm_resource_group.main.name
+  subnet_id           = module.network.vm_subnet_id
+  admin_password      = random_password.vm_admin.result
 }
 
 resource "azurerm_kubernetes_cluster" "main" {

@@ -36,3 +36,9 @@ resource "azurerm_key_vault_secret" "postgres_password" {
   value        = var.postgres_password
   key_vault_id = azurerm_key_vault.main.id
 }
+
+resource "azurerm_key_vault_secret" "vm_admin_password" {
+  name         = "vm-admin-password"
+  value        = var.vm_admin_password
+  key_vault_id = azurerm_key_vault.main.id
+}
