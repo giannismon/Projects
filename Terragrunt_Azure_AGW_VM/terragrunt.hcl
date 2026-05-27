@@ -1,21 +1,3 @@
-locals {
-  env = basename(dirname(get_terragrunt_dir()))
-}
-
-remote_state {
-  backend = "azurerm"
-  config = {
-    resource_group_name  = "tfstate-rg"
-    storage_account_name = "mytfstate"
-    container_name       = "tfstate"
-    key                  = "${local.env}/terraform.tfstate"
-  }
-  generate = {
-    path      = "backend.tf"
-    if_exists = "overwrite_terragrunt"
-  }
-}
-
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite_terragrunt"
