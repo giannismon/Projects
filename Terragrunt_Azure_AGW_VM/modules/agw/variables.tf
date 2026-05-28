@@ -25,3 +25,7 @@ variable "ssl_certificate_secret_id" {
 variable "identity_id" {
   type = string
 }
+
+variable "blocked_ip" {
+  type = string
+}
