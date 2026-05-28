@@ -17,4 +17,5 @@ locals {
   disk2_type     = "Standard_LRS"
   agw_name       = "main"
   blocked_ip     = "1.2.3.4/32"
+  admin_password = "MyP@ssword123!"
 }

@@ -24,12 +24,6 @@ resource "azurerm_key_vault" "kv" {
   }
 }
 
-resource "azurerm_key_vault_secret" "vm_password" {
-  name         = "vm-admin-password"
-  value        = var.admin_password
-  key_vault_id = azurerm_key_vault.kv.id
-}
-
 resource "azurerm_key_vault_certificate" "ssl_cert" {
   name         = "agw-ssl-cert"
   key_vault_id = azurerm_key_vault.kv.id

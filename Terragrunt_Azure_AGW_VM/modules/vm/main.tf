@@ -1,8 +1,3 @@
-data "azurerm_key_vault_secret" "vm_password" {
-  name         = "vm-admin-password"
-  key_vault_id = var.key_vault_id
-}
-
 resource "azurerm_network_interface" "nic" {
   name                = "nic-ioannis-${var.vm_name}"
   location            = var.location
@@ -23,7 +18,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   size                            = var.vm_size
   admin_username                  = var.admin_username
   disable_password_authentication = false
-  admin_password                  = data.azurerm_key_vault_secret.vm_password.value
+  admin_password                  = var.admin_password
 
   network_interface_ids = [azurerm_network_interface.nic.id]
 

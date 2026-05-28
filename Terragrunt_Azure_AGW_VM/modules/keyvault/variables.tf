@@ -10,11 +10,6 @@ variable "location" {
   type = string
 }
 
-variable "admin_password" {
-  type      = string
-  sensitive = true
-}
-
 variable "agw_principal_id" {
   type = string
 }
