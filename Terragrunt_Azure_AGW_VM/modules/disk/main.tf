@@ -1,5 +1,5 @@
 resource "azurerm_managed_disk" "disk" {
-  name                 = "disk-p44010-${var.vm_name}"
+  name                 = "disk-ioannis-${var.vm_name}"
   location             = var.location
   resource_group_name  = var.resource_group_name
   storage_account_type = var.disk_type

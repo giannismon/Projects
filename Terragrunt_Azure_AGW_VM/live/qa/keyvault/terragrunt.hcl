@@ -6,7 +6,7 @@ dependency "rg"       { config_path = "../rg" }
 dependency "identity" { config_path = "../identity" }
 
 inputs = {
-  kv_name             = "kv-p44010-qa"
+  kv_name             = "kv-ioannis-qa"
   resource_group_name = dependency.rg.outputs.rg_name
   location            = dependency.rg.outputs.rg_location
   admin_password      = get_env("TF_VAR_admin_password")
