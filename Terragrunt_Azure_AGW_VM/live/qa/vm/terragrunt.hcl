@@ -17,6 +17,6 @@ inputs = {
   subnet_id           = dependency.networking.outputs.vm_subnet_id
   private_ip          = local.env.private_ip
   admin_username      = local.env.admin_username
-  admin_password      = dependency.keyvault.outputs.vm_password
+  key_vault_id        = dependency.keyvault.outputs.kv_id
   vm_size             = local.env.vm_size
 }
