@@ -1,5 +1,5 @@
 resource "azurerm_network_interface" "nic" {
-  name                = "nic-p44010-${var.vm_name}"
+  name                = "nic-ioannis-${var.vm_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -12,7 +12,7 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                            = "vm-p44010-${var.vm_name}"
+  name                            = "vm-ioannis-${var.vm_name}"
   resource_group_name             = var.resource_group_name
   location                        = var.location
   size                            = var.vm_size

@@ -1,5 +1,5 @@
 resource "azurerm_public_ip" "agw_pip" {
-  name                = "pip-agw-p44010-${var.agw_name}"
+  name                = "pip-agw-ioannis-${var.agw_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -7,7 +7,7 @@ resource "azurerm_public_ip" "agw_pip" {
 }
 
 resource "azurerm_web_application_firewall_policy" "waf_policy" {
-  name                = "waf-policy-p44010"
+  name                = "waf-policy-ioannis"
   resource_group_name = var.resource_group_name
   location            = var.location
 
@@ -23,7 +23,7 @@ resource "azurerm_web_application_firewall_policy" "waf_policy" {
       }
       operator           = "IPMatch"
       negation_condition = false
-      match_values       = ["203.0.113.99/32"]
+      match_values       = ["1.2.3.4/32"]
     }
   }
 
@@ -44,7 +44,7 @@ resource "azurerm_web_application_firewall_policy" "waf_policy" {
 }
 
 resource "azurerm_application_gateway" "agw" {
-  name                = "agw-p44010-${var.agw_name}"
+  name                = "agw-ioannis-${var.agw_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
 

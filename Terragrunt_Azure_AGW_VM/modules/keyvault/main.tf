@@ -69,7 +69,7 @@ resource "azurerm_key_vault_certificate" "ssl_cert" {
         "keyCertSign",
         "keyEncipherment",
       ]
-      subject            = "CN=agw-p44010"
+      subject            = "CN=agw-ioannis"
       validity_in_months = 12
     }
   }
