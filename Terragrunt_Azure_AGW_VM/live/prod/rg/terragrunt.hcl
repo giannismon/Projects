@@ -7,7 +7,7 @@ locals {
 terraform { source = "../../../modules/rg" }
 
 inputs = {
-  rg_name  = "rg-ioannis-prod"
+  rg_name  = local.env.rg_name
   location = local.env.location
   tags     = local.env.tags
 }

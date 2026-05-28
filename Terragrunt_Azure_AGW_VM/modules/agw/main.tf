@@ -23,7 +23,7 @@ resource "azurerm_web_application_firewall_policy" "waf_policy" {
       }
       operator           = "IPMatch"
       negation_condition = false
-      match_values       = ["1.2.3.4/32"]
+      match_values       = [var.blocked_ip]
     }
   }
 
