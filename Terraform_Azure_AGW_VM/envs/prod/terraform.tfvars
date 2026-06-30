@@ -3,7 +3,7 @@ rg_name  = "rg-p44010-prod"
 location = "West Europe"
 
 ################################## Key Vault ##################################
-kv_name = "kv-p44010-prod"
+kv_name = "kv-prod"
 
 ################################## Virtual Machine ##################################
 vm_name        = "prod"
