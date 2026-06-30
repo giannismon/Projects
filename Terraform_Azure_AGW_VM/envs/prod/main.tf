@@ -24,7 +24,7 @@ module "rg" {
 }
 
 resource "azurerm_user_assigned_identity" "agw_identity" {
-  name                = "id-agw-p44010"
+  name                = "id-agw"
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
 }
