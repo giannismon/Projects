@@ -1,6 +1,6 @@
 # Terraform Azure AKS
 
-Deploys an Azure Kubernetes Service cluster with Terraform, split into a reusable module and per-environment value files. The cluster runs a system node pool plus any number of user node pools, all with the cluster autoscaler enabled and a managed identity.
+Deploys an Azure Kubernetes Service cluster with Terraform. The cluster and its resource group live in the environment root; user node pools are created through a single reusable module, one call per pool.
 
 Originally a hand-written `az aks create` script, rewritten so the environment can be reviewed before it changes, reproduced exactly, and torn down without leaving billable leftovers behind.
 
@@ -9,32 +9,36 @@ Originally a hand-written `az aks create` script, rewritten so the environment c
 ```
 Terraform_Azure_AKS/
 ├── modules/
-│   └── aks/                    # what an AKS cluster is — no values inside
+│   └── nodepool/               # one user node pool — the only module
 │       ├── versions.tf
 │       ├── variables.tf
 │       ├── main.tf
 │       └── outputs.tf
 └── envs/
-    └── dev/                    # how we want it in dev
+    └── dev/
         ├── versions.tf         # provider + backend
         ├── variables.tf
-        ├── main.tf             # calls the module
+        ├── main.tf             # resource group, cluster, and for_each over the module
         ├── outputs.tf
         └── terraform.tfvars.example
 ```
 
-The module contains no environment values — no names, no region, no subscription. A second environment is a copy of `envs/dev/` with a different `terraform.tfvars`, reusing the same module and keeping its own state file.
+A second environment is a copy of `envs/dev/` with its own `terraform.tfvars`, reusing the same module and keeping a separate state file.
 
 ## What it creates
 
-| Resource | Name | Notes |
+| Resource | Where it is defined | Notes |
 |---|---|---|
-| Resource group | `rg-<prefix>` | |
-| AKS cluster | `aks-<prefix>` | `Free` SKU, Azure CNI, system-assigned identity |
-| System node pool | configurable | autoscaling, runs CoreDNS and metrics-server |
-| User node pools | one per map key | autoscaling, `mode = User`, custom labels and taints |
+| Resource group `rg-<prefix>` | `envs/dev/main.tf` | |
+| AKS cluster `aks-<prefix>` | `envs/dev/main.tf` | `Free` SKU, Azure CNI, system-assigned identity |
+| System node pool | `default_node_pool` block | autoscaling, runs CoreDNS and metrics-server |
+| User node pools | `modules/nodepool` | one module instance per map key |
 
 Tags are applied to the resources and reused as node labels, so `kubectl get nodes -L owner,env` identifies node ownership without opening the portal.
+
+### Why the system pool is not a module
+
+`default_node_pool` is a block inside the `azurerm_kubernetes_cluster` resource, not a standalone resource — Azure requires it to exist from the moment the cluster is created. Only user pools are separate resources, so only they can be modularised.
 
 ## Usage
 
@@ -73,13 +77,15 @@ user_node_pools = {
 }
 ```
 
-The module uses `for_each`, so pools are tracked by key rather than by list index. Removing one pool therefore does not cause the others to be recreated.
+Each key becomes its own module instance, addressed as `module.node_pool["dbpool"]`. Because `for_each` tracks pools by key rather than by list index, removing one pool leaves the others untouched.
 
 ## Design notes
 
-**`ignore_changes` on `node_count`** — both pools set it. Node count is owned by the cluster autoscaler at runtime; without this, an unrelated `terraform apply` would reset the count and destroy nodes that are actively running pods.
+**`ignore_changes` on `node_count`** — set on both the system pool and the module. Node count is owned by the cluster autoscaler at runtime; without this, an unrelated `terraform apply` would reset the count and destroy nodes that are actively running pods.
 
 **No provider block in the module** — a module that declares its own provider cannot be reused with a different subscription or alias, and produces a deprecation warning.
+
+**Node pool name validation** — the module rejects names Azure would refuse (lowercase, alphanumeric, max 12 characters for Linux pools) at plan time rather than eight minutes into an apply.
 
 **`kube_config_raw` is marked sensitive** — otherwise `apply` prints the full kubeconfig to the console and into pipeline logs.
 
