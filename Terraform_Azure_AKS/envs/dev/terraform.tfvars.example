@@ -1,0 +1,41 @@
+################################## Subscription ##################################
+# az account show --query id -o tsv
+subscription_id = "00000000-0000-0000-0000-000000000000"
+
+################################## Naming & Region ##################################
+# Produces rg-<prefix> and aks-<prefix>
+name_prefix = "demo"
+location    = "westeurope"
+
+# null = whatever AKS defaults to at apply time.
+# To pin: az aks get-versions --location westeurope -o table
+kubernetes_version = null
+
+################################## Tags (also node labels) ##################################
+tags = {
+  owner = "demo"
+  env   = "dev"
+}
+
+################################## System Node Pool ##################################
+system_node_pool = {
+  name            = "systempool"
+  vm_size         = "Standard_D2s_v3"
+  os_disk_size_gb = 50
+  node_count      = 2
+  min_count       = 1
+  max_count       = 3
+}
+
+################################## User Node Pools ##################################
+# Add as many as needed — the module loops over this map.
+user_node_pools = {
+  apppool = {
+    vm_size         = "Standard_D2s_v3"
+    os_disk_size_gb = 50
+    node_count      = 1
+    min_count       = 1
+    max_count       = 3
+    node_labels     = { type = "app" }
+  }
+}
