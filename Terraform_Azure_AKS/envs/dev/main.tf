@@ -63,16 +63,9 @@ module "node_pool" {
   source   = "../../modules/nodepool"
   for_each = var.user_node_pools
 
-  cluster_id = azurerm_kubernetes_cluster.this.id
-  name       = each.key
-
-  vm_size         = each.value.vm_size
-  os_disk_size_gb = each.value.os_disk_size_gb
-  node_count      = each.value.node_count
-  min_count       = each.value.min_count
-  max_count       = each.value.max_count
-  node_taints     = each.value.node_taints
-
-  node_labels = merge(local.node_labels, each.value.node_labels)
-  tags        = var.tags
+  cluster_id    = azurerm_kubernetes_cluster.this.id
+  name          = each.key
+  pool          = each.value
+  common_labels = local.node_labels
+  tags          = var.tags
 }

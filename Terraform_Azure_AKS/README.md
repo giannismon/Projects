@@ -85,6 +85,10 @@ Each key becomes its own module instance, addressed as `module.node_pool["dbpool
 
 **No provider block in the module** — a module that declares its own provider cannot be reused with a different subscription or alias, and produces a deprecation warning.
 
+**The module takes one `pool` object** rather than a dozen scalar arguments, so the
+call site stays at six lines. Field defaults live in the object type, and the label
+merge happens inside the module.
+
 **Node pool name validation** — the module rejects names Azure would refuse (lowercase, alphanumeric, max 12 characters for Linux pools) at plan time rather than eight minutes into an apply.
 
 **`kube_config_raw` is marked sensitive** — otherwise `apply` prints the full kubeconfig to the console and into pipeline logs.

@@ -3,18 +3,19 @@
 resource "azurerm_kubernetes_cluster_node_pool" "this" {
   name                  = var.name
   kubernetes_cluster_id = var.cluster_id
-  mode                  = var.mode
+  mode                  = var.pool.mode
 
-  vm_size         = var.vm_size
-  os_disk_size_gb = var.os_disk_size_gb
+  vm_size         = var.pool.vm_size
+  os_disk_size_gb = var.pool.os_disk_size_gb
 
-  node_count           = var.node_count
+  node_count           = var.pool.node_count
   auto_scaling_enabled = true
-  min_count            = var.min_count
-  max_count            = var.max_count
+  min_count            = var.pool.min_count
+  max_count            = var.pool.max_count
 
-  node_labels = var.node_labels
-  node_taints = var.node_taints
+  # Shared labels plus pool-specific ones. On conflict the pool wins.
+  node_labels = merge(var.common_labels, var.pool.node_labels)
+  node_taints = var.pool.node_taints
   tags        = var.tags
 
   # Node count is owned by the cluster autoscaler at runtime. Without this,
