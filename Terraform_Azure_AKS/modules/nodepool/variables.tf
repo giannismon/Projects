@@ -13,53 +13,36 @@ variable "name" {
   }
 }
 
-variable "mode" {
-  description = "User for application workloads. System only for additional system pools."
-  type        = string
-  default     = "User"
+variable "pool" {
+  description = <<-EOT
+    The whole pool description as one object. Every field is optional — anything
+    left out takes the default shown here.
+
+    node_taints: changing them RECREATES the pool.
+  EOT
+
+  type = object({
+    mode            = optional(string, "User")
+    vm_size         = optional(string, "Standard_D2s_v3")
+    os_disk_size_gb = optional(number, 50)
+    node_count      = optional(number, 1)
+    min_count       = optional(number, 1)
+    max_count       = optional(number, 3)
+    node_labels     = optional(map(string), {})
+    node_taints     = optional(list(string), [])
+  })
+  default = {}
 
   validation {
-    condition     = contains(["User", "System"], var.mode)
-    error_message = "mode must be User or System."
+    condition     = contains(["User", "System"], var.pool.mode)
+    error_message = "pool.mode must be User or System."
   }
 }
 
-variable "vm_size" {
-  type    = string
-  default = "Standard_D2s_v3"
-}
-
-variable "os_disk_size_gb" {
-  type    = number
-  default = 50
-}
-
-variable "node_count" {
-  description = "Initial node count. Owned by the autoscaler afterwards — see ignore_changes."
-  type        = number
-  default     = 1
-}
-
-variable "min_count" {
-  type    = number
-  default = 1
-}
-
-variable "max_count" {
-  type    = number
-  default = 3
-}
-
-variable "node_labels" {
-  description = "Kubernetes node labels, used by nodeSelector"
+variable "common_labels" {
+  description = "Labels shared by every pool; merged with pool.node_labels"
   type        = map(string)
   default     = {}
-}
-
-variable "node_taints" {
-  description = "Node taints, e.g. [\"dedicated=db:NoSchedule\"]. Changing them recreates the pool."
-  type        = list(string)
-  default     = []
 }
 
 variable "tags" {

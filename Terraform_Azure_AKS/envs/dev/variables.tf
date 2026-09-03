@@ -35,6 +35,7 @@ variable "system_node_pool" {
 
 variable "user_node_pools" {
   type = map(object({
+    mode            = optional(string, "User")
     vm_size         = optional(string, "Standard_D2s_v3")
     os_disk_size_gb = optional(number, 50)
     node_count      = optional(number, 1)

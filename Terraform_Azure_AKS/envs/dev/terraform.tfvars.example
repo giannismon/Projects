@@ -31,6 +31,7 @@ system_node_pool = {
 # Add as many as needed — the module loops over this map.
 user_node_pools = {
   apppool = {
+    # mode = "User"   # default; "System" only for extra system pools
     vm_size         = "Standard_D2s_v3"
     os_disk_size_gb = 50
     node_count      = 1
