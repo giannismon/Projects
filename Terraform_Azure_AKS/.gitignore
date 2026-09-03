@@ -1,0 +1,20 @@
+# Downloaded providers — restored by terraform init
+.terraform/
+
+# State: contains the kubeconfig in PLAIN TEXT. Never commit.
+*.tfstate
+*.tfstate.*
+
+# Saved plans are bound to a specific state and are not portable
+tfplan
+*.tfplan
+
+crash.log
+*.pem
+kubeconfig
+
+# Real values, including the subscription id — copy the .example file instead
+terraform.tfvars
+
+# Note: .terraform.lock.hcl is deliberately NOT ignored. It pins the provider
+# version so everyone gets identical behaviour.
