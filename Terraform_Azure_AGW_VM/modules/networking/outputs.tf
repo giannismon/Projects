@@ -9,11 +9,11 @@ output "subnet_names" {
 }
 
 output "vnet_id" {
-  description = "Id του virtual network."
+  description = "Id of the virtual network."
   value       = azurerm_virtual_network.vnet.id
 }
 
 output "vnet_name" {
-  description = "Όνομα του virtual network."
+  description = "Name of the virtual network."
   value       = azurerm_virtual_network.vnet.name
 }
