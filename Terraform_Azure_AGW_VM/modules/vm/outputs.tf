@@ -9,6 +9,6 @@ output "vm_names" {
 }
 
 output "private_ips" {
-  description = "Map logical name => private IP του NIC."
+  description = "Map logical name => private IP of the NIC."
   value       = { for k, n in azurerm_network_interface.nic : k => n.private_ip_address }
 }

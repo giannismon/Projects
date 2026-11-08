@@ -1,9 +1,9 @@
 variable "disks" {
   description = <<-EOT
-    Data disks προς δημιουργία και attach. Το key είναι σταθερό logical name
-    (disk1, data, logs) και καθορίζει την ταυτότητα στο state — μετονομασία key
-    σημαίνει destroy/create, δηλαδή χάσιμο δεδομένων.
-    Το vm είναι το logical name του VM (key του vm_ids) όπου γίνεται το attach.
+    Data disks to create and attach. The key is a stable logical name
+    (disk1, data, logs) and is the resource identity in state, so renaming a
+    key means destroy and create, which for a disk means losing the data.
+    vm is the logical name of the VM (a key of vm_ids) to attach to.
   EOT
   type = map(object({
     vm           = string
@@ -11,7 +11,7 @@ variable "disks" {
     lun          = number
     disk_type    = optional(string, "Premium_LRS")
     caching      = optional(string, "ReadWrite")
-    name         = optional(string) # αν λείπει, παράγεται από vm + key
+    name         = optional(string) # defaults to vm + key
   }))
   default = {}
 
@@ -20,33 +20,33 @@ variable "disks" {
       for vm in distinct([for d in var.disks : d.vm]) :
       length(distinct([for d in var.disks : d.lun if d.vm == vm])) == length([for d in var.disks : d.lun if d.vm == vm])
     ])
-    error_message = "Τα lun πρέπει να είναι μοναδικά ΑΝΑ VM (δύο VMs μπορούν κάλλιστα να έχουν lun 0)."
+    error_message = "lun must be unique PER VM (two VMs may both use lun 0)."
   }
 
   validation {
     condition     = alltrue([for d in var.disks : contains(["None", "ReadOnly", "ReadWrite"], d.caching)])
-    error_message = "Το caching πρέπει να είναι None, ReadOnly ή ReadWrite."
+    error_message = "caching must be None, ReadOnly or ReadWrite."
   }
 }
 
 variable "vm_ids" {
-  description = "Map logical name => VM id, από το output vm_ids του vm module."
+  description = "Map logical name => VM id, from the vm module's vm_ids output."
   type        = map(string)
   default     = {}
 }
 
 variable "resource_group_name" {
-  description = "Resource group των δίσκων."
+  description = "Resource group of the disks."
   type        = string
 }
 
 variable "location" {
-  description = "Azure region των δίσκων."
+  description = "Azure region of the disks."
   type        = string
 }
 
 variable "tags" {
-  description = "Tags σε όλους τους δίσκους."
+  description = "Tags applied to every disk."
   type        = map(string)
   default     = {}
 }

@@ -1,7 +1,7 @@
-# Ένα Bastion host ανά vnet — το Azure δεν επιτρέπει δεύτερο στο ίδιο
-# AzureBastionSubnet, οπότε εδώ δεν υπάρχει for_each να γίνει.
+# One Bastion host per VNet: Azure does not allow a second one in the same
+# AzureBastionSubnet, so there is no for_each to apply here.
 resource "azurerm_public_ip" "bastion_pip" {
-  name                = "pip-bastion-p44010"
+  name                = "pip-bastion-monastiridis"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -10,7 +10,7 @@ resource "azurerm_public_ip" "bastion_pip" {
 }
 
 resource "azurerm_bastion_host" "bastion" {
-  name                = "bastion-p44010"
+  name                = "bastion-monastiridis"
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags

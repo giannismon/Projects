@@ -1,10 +1,10 @@
 variable "agw_name" {
-  description = "Logical name του gateway — μπαίνει στα Azure names (agw-p44010-<name>)."
+  description = "Logical name of the gateway, used in the Azure names (agw-monastiridis-<name>)."
   type        = string
 }
 
 variable "backend_pools" {
-  description = "Backend pools. Key = όνομα του pool, όπως το δείχνουν τα routing rules."
+  description = "Backend pools. The key is the pool name that routing rules reference."
   type = map(object({
     ip_addresses = optional(list(string))
     fqdns        = optional(list(string))
@@ -12,7 +12,7 @@ variable "backend_pools" {
 }
 
 variable "frontend_ports" {
-  description = "Frontend ports: key = όνομα, value = port."
+  description = "Frontend ports: key = name, value = port number."
   type        = map(number)
   default = {
     "port-80"  = 80
@@ -21,7 +21,7 @@ variable "frontend_ports" {
 }
 
 variable "ssl_certificates" {
-  description = "SSL certificates από Key Vault. Key = όνομα, όπως το δείχνουν οι listeners."
+  description = "SSL certificates from Key Vault. The key is the name that listeners reference."
   type = map(object({
     key_vault_secret_id = string
   }))
@@ -29,7 +29,7 @@ variable "ssl_certificates" {
 }
 
 variable "backend_http_settings" {
-  description = "Backend HTTP settings. Key = όνομα, όπως το δείχνουν τα routing rules."
+  description = "Backend HTTP settings. The key is the name that routing rules reference."
   type = map(object({
     port                                = optional(number, 80)
     protocol                            = optional(string, "Http")
@@ -46,7 +46,7 @@ variable "backend_http_settings" {
 }
 
 variable "probes" {
-  description = "Health probes. Key = όνομα, όπως το δείχνει το probe_name των settings."
+  description = "Health probes. The key is the name that probe_name on the settings references."
   type = map(object({
     path                = string
     protocol            = optional(string, "Http")
@@ -59,7 +59,7 @@ variable "probes" {
 }
 
 variable "listeners" {
-  description = "HTTP listeners. Key = όνομα, όπως το δείχνουν τα routing rules."
+  description = "HTTP listeners. The key is the name that routing rules reference."
   type = map(object({
     frontend_port   = string
     protocol        = optional(string, "Http")
@@ -80,7 +80,7 @@ variable "listeners" {
 }
 
 variable "redirects" {
-  description = "Redirect configurations. Key = όνομα, όπως το δείχνουν τα routing rules."
+  description = "Redirect configurations. The key is the name that routing rules reference."
   type = map(object({
     target_listener      = string
     redirect_type        = optional(string, "Permanent")
@@ -96,8 +96,9 @@ variable "redirects" {
 
 variable "routing_rules" {
   description = <<-EOT
-    Request routing rules. Key = όνομα του rule.
-    Κάθε rule θέλει ή redirect, ή backend_pool μαζί με backend_http_settings.
+    Request routing rules, keyed by rule name.
+    Every rule needs either a redirect, or a backend_pool together with
+    backend_http_settings.
   EOT
   type = map(object({
     priority              = number
@@ -123,12 +124,12 @@ variable "routing_rules" {
 
   validation {
     condition     = length(distinct([for r in var.routing_rules : r.priority])) == length(var.routing_rules)
-    error_message = "Κάθε routing rule πρέπει να έχει μοναδικό priority."
+    error_message = "Every routing rule must have a unique priority."
   }
 }
 
 variable "sku" {
-  description = "SKU του gateway."
+  description = "SKU of the gateway."
   type = object({
     name     = optional(string, "WAF_v2")
     tier     = optional(string, "WAF_v2")
@@ -144,7 +145,7 @@ variable "ssl_policy_name" {
 }
 
 variable "waf_custom_rules" {
-  description = "WAF custom rules. Key = όνομα του rule."
+  description = "WAF custom rules, keyed by rule name."
   type = map(object({
     priority           = number
     action             = string
@@ -166,12 +167,12 @@ variable "waf_custom_rules" {
 
   validation {
     condition     = length(distinct([for r in var.waf_custom_rules : r.priority])) == length(var.waf_custom_rules)
-    error_message = "Κάθε WAF custom rule πρέπει να έχει μοναδικό priority."
+    error_message = "Every WAF custom rule must have a unique priority."
   }
 }
 
 variable "waf_managed_rule_sets" {
-  description = "Managed rule sets: key = type, value = version."
+  description = "Managed rule sets: key = rule set type, value = version."
   type        = map(string)
   default = {
     "OWASP" = "3.2"
@@ -179,7 +180,7 @@ variable "waf_managed_rule_sets" {
 }
 
 variable "waf_settings" {
-  description = "Policy settings του WAF."
+  description = "Policy settings of the WAF."
   type = object({
     enabled                     = optional(bool, true)
     mode                        = optional(string, "Prevention")
@@ -191,17 +192,17 @@ variable "waf_settings" {
 }
 
 variable "agw_subnet_id" {
-  description = "Subnet του gateway (δικό του, μόνο για το AGW)."
+  description = "Subnet of the gateway, dedicated to the Application Gateway."
   type        = string
 }
 
 variable "identity_id" {
-  description = "User assigned identity που διαβάζει το certificate από το Key Vault."
+  description = "User assigned identity that reads the certificate from Key Vault."
   type        = string
 }
 
 variable "resource_group_name" {
-  description = "Resource group του gateway."
+  description = "Resource group of the gateway."
   type        = string
 }
 
@@ -211,7 +212,7 @@ variable "location" {
 }
 
 variable "tags" {
-  description = "Tags στο gateway, στο public IP και στο WAF policy."
+  description = "Tags applied to the gateway, its public IP and the WAF policy."
   type        = map(string)
   default     = {}
 }
