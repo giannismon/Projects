@@ -1,11 +1,17 @@
+# Ένα resource group ανά environment — όλα τα modules κρεμάνε από αυτό.
+# Map εδώ θα σήμαινε module.rg.rg_names["main"] σε ~15 σημεία για μηδέν κέρδος.
 variable "rg_name" {
-  type = string
+  description = "Όνομα του resource group."
+  type        = string
 }
 
 variable "location" {
-  type = string
+  description = "Azure region."
+  type        = string
 }
 
 variable "tags" {
-  type = map(string)
+  description = "Tags στο resource group."
+  type        = map(string)
+  default     = {}
 }

@@ -2,8 +2,19 @@ output "resource_group_name" {
   value = module.rg.rg_name
 }
 
-output "vm_private_ip" {
-  value = module.vm.private_ip
+output "subnet_names" {
+  description = "Map logical name => Azure subnet name."
+  value       = module.networking.subnet_names
+}
+
+output "vm_names" {
+  description = "Map logical name => Azure VM name."
+  value       = module.vms.vm_names
+}
+
+output "vm_private_ips" {
+  description = "Map logical name => private IP."
+  value       = module.vms.private_ips
 }
 
 output "disk_names" {
