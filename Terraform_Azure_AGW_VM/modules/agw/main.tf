@@ -1,5 +1,5 @@
 resource "azurerm_public_ip" "agw_pip" {
-  name                = "pip-agw-p44010-${var.agw_name}"
+  name                = "pip-agw-monastiridis-${var.agw_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -8,7 +8,7 @@ resource "azurerm_public_ip" "agw_pip" {
 }
 
 resource "azurerm_web_application_firewall_policy" "waf_policy" {
-  name                = "waf-policy-p44010-${var.agw_name}"
+  name                = "waf-policy-monastiridis-${var.agw_name}"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
@@ -55,7 +55,7 @@ resource "azurerm_web_application_firewall_policy" "waf_policy" {
 }
 
 resource "azurerm_application_gateway" "agw" {
-  name                = "agw-p44010-${var.agw_name}"
+  name                = "agw-monastiridis-${var.agw_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
@@ -189,17 +189,17 @@ resource "azurerm_application_gateway" "agw" {
   lifecycle {
     precondition {
       condition     = alltrue([for r in var.routing_rules : r.redirect != null || (r.backend_pool != null && r.backend_http_settings != null)])
-      error_message = "Κάθε routing rule θέλει ή redirect ή backend_pool + backend_http_settings."
+      error_message = "Every routing rule needs either a redirect, or a backend_pool with backend_http_settings."
     }
 
     precondition {
       condition     = alltrue([for l in var.listeners : contains(keys(var.frontend_ports), l.frontend_port)])
-      error_message = "Κάθε listener πρέπει να δείχνει σε frontend_port που υπάρχει στο frontend_ports."
+      error_message = "Every listener must reference a frontend port that exists in frontend_ports."
     }
 
     precondition {
       condition     = alltrue([for r in var.routing_rules : contains(keys(var.listeners), r.listener)])
-      error_message = "Κάθε routing rule πρέπει να δείχνει σε listener που υπάρχει στο listeners."
+      error_message = "Every routing rule must reference a listener that exists in listeners."
     }
   }
 }

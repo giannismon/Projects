@@ -1,10 +1,10 @@
 output "kv_id" {
-  description = "Id του Key Vault."
+  description = "Id of the Key Vault."
   value       = azurerm_key_vault.kv.id
 }
 
 output "secret_values" {
-  description = "Map secret name => τιμή."
+  description = "Map secret name => value."
   value       = { for k, s in azurerm_key_vault_secret.secret : k => s.value }
   sensitive   = true
 }
@@ -15,6 +15,6 @@ output "secret_ids" {
 }
 
 output "certificate_secret_ids" {
-  description = "Map certificate name => secret id (αυτό θέλει το Application Gateway)."
+  description = "Map certificate name => secret id, which is what the Application Gateway needs."
   value       = { for k, c in azurerm_key_vault_certificate.cert : k => c.secret_id }
 }

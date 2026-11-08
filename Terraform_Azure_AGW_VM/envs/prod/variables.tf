@@ -1,42 +1,42 @@
 variable "rg_name" {
-  description = "Όνομα του resource group."
+  description = "Name of the resource group."
   type        = string
 }
 
 variable "location" {
-  description = "Azure region για όλα τα resources."
+  description = "Azure region for every resource."
   type        = string
 }
 
 variable "tags" {
-  description = "Tags σε όλα τα resources."
+  description = "Tags applied to every resource."
   type        = map(string)
 }
 
 variable "kv_name" {
-  description = "Όνομα του Key Vault (globally unique)."
+  description = "Name of the Key Vault, globally unique."
   type        = string
 }
 
 variable "admin_username" {
-  description = "Local admin username των VMs."
+  description = "Local admin username of the VMs."
   type        = string
 }
 
 variable "admin_password" {
-  description = "Local admin password — αποθηκεύεται στο Key Vault ως vm-admin-password."
+  description = "Local admin password, stored in Key Vault as vm-admin-password."
   type        = string
   sensitive   = true
 }
 
 variable "address_space" {
-  description = "Address space του vnet."
+  description = "Address space of the virtual network."
   type        = list(string)
   default     = ["10.0.0.0/16"]
 }
 
 variable "subnets" {
-  description = "Subnets, keyed by logical name. Το bastion θέλει name = AzureBastionSubnet."
+  description = "Subnets keyed by logical name. The Bastion one needs name = AzureBastionSubnet."
   type = map(object({
     address_prefix    = string
     name              = optional(string)
@@ -45,7 +45,7 @@ variable "subnets" {
 }
 
 variable "vms" {
-  description = "VMs, keyed by logical name. Το key γίνεται vm-p44010-<key>."
+  description = "VMs keyed by logical name. The key becomes vm-monastiridis-<key>."
   type = map(object({
     private_ip   = optional(string)
     vm_size      = optional(string, "Standard_B1s")
@@ -61,7 +61,7 @@ variable "vms" {
 }
 
 variable "disks" {
-  description = "Data disks, keyed by logical name. Το vm δείχνει σε key του vms."
+  description = "Data disks keyed by logical name. vm references a key of vms."
   type = map(object({
     vm           = string
     disk_size_gb = number

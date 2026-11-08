@@ -1,9 +1,9 @@
 variable "vms" {
   description = <<-EOT
-    VMs προς δημιουργία. Το key είναι σταθερό logical name (prod, web1, app)
-    και καθορίζει τα Azure names (vm-p44010-<key>, nic-p44010-<key>) και την
-    ταυτότητα στο state — μετονομασία key σημαίνει destroy/create του VM.
-    private_ip = null σημαίνει Dynamic allocation.
+    VMs to create. The key is a stable logical name (prod, web1, app) that
+    drives the Azure names (vm-monastiridis-<key>, nic-monastiridis-<key>) and
+    is the resource identity in state, so renaming a key destroys and recreates
+    the VM. private_ip = null means Dynamic allocation.
   EOT
   type = map(object({
     private_ip   = optional(string)
@@ -25,17 +25,17 @@ variable "vms" {
 
   validation {
     condition     = length(distinct([for v in var.vms : v.private_ip if v.private_ip != null])) == length([for v in var.vms : v.private_ip if v.private_ip != null])
-    error_message = "Δύο VMs δεν μπορούν να έχουν το ίδιο private_ip."
+    error_message = "Two VMs cannot share the same private_ip."
   }
 }
 
 variable "subnet_id" {
-  description = "Subnet όπου μπαίνουν τα NICs όλων των VMs."
+  description = "Subnet that holds the NICs of every VM."
   type        = string
 }
 
 variable "resource_group_name" {
-  description = "Resource group των VMs."
+  description = "Resource group of the VMs."
   type        = string
 }
 
@@ -45,18 +45,18 @@ variable "location" {
 }
 
 variable "admin_username" {
-  description = "Local admin username (κοινό σε όλα τα VMs)."
+  description = "Local admin username, shared by every VM."
   type        = string
 }
 
 variable "admin_password" {
-  description = "Local admin password (κοινό σε όλα τα VMs) — από το Key Vault."
+  description = "Local admin password, shared by every VM, read from Key Vault."
   type        = string
   sensitive   = true
 }
 
 variable "tags" {
-  description = "Tags στα VMs και στα NICs."
+  description = "Tags applied to the VMs and their NICs."
   type        = map(string)
   default     = {}
 }

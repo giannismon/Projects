@@ -1,7 +1,7 @@
 data "azurerm_client_config" "current" {}
 
 locals {
-  # Η πολιτική του deployer παράγεται εδώ γιατί το object_id του έρχεται από data source.
+  # The deployer policy is built here because its object_id comes from a data source.
   deployer_policy = var.grant_deployer_access ? {
     deployer = {
       object_id               = data.azurerm_client_config.current.object_id
@@ -40,10 +40,10 @@ resource "azurerm_key_vault_secret" "secret" {
   for_each = var.secrets
 
   name = each.key
-  # sensitive(): κρύβει την τιμή στο plan ακόμα κι αν ο caller την περάσει χωρίς mark.
-  # Η variable ΔΕΝ είναι declared sensitive γιατί τότε ολόκληρη η map γίνεται
-  # sensitive και το for_each τη ρίχνει (Invalid for_each argument). Sensitive
-  # τιμή ΜΕΣΑ στη map είναι εντάξει — το mark είναι στην τιμή, όχι στα keys.
+  # sensitive(): hides the value in the plan even if the caller passes it unmarked.
+  # The variable is NOT declared sensitive, because that would make the whole map
+  # sensitive and for_each rejects it (Invalid for_each argument). A sensitive
+  # value INSIDE the map is fine: the mark is on the value, not on the keys.
   value        = sensitive(each.value.value)
   content_type = each.value.content_type
   key_vault_id = azurerm_key_vault.kv.id

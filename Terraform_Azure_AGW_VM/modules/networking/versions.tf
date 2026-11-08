@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.3" # optional() με default τιμή σε object type
+  required_version = ">= 1.3" # optional() with a default value in an object type
 
   required_providers {
     azurerm = {

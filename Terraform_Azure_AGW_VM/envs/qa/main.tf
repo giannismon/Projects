@@ -48,7 +48,7 @@ module "keyvault" {
 
   certificates = {
     "agw-ssl-cert" = {
-      subject = "CN=agw-p44010"
+      subject = "CN=agw-monastiridis"
     }
   }
 

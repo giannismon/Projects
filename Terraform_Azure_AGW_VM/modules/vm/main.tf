@@ -1,7 +1,7 @@
 resource "azurerm_network_interface" "nic" {
   for_each = var.vms
 
-  name                = "nic-p44010-${each.key}"
+  name                = "nic-monastiridis-${each.key}"
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
@@ -17,7 +17,7 @@ resource "azurerm_network_interface" "nic" {
 resource "azurerm_linux_virtual_machine" "vm" {
   for_each = var.vms
 
-  name                            = "vm-p44010-${each.key}"
+  name                            = "vm-monastiridis-${each.key}"
   resource_group_name             = var.resource_group_name
   location                        = var.location
   size                            = each.value.vm_size
