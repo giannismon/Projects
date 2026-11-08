@@ -1,21 +1,26 @@
 variable "disks" {
   description = <<-EOT
-    Data disks προς δημιουργία και attach στο VM.
-    Το key είναι σταθερό logical name (disk1, data, logs) και καθορίζει την ταυτότητα
-    του resource στο state — μετονομασία key σημαίνει destroy/create.
+    Data disks προς δημιουργία και attach. Το key είναι σταθερό logical name
+    (disk1, data, logs) και καθορίζει την ταυτότητα στο state — μετονομασία key
+    σημαίνει destroy/create, δηλαδή χάσιμο δεδομένων.
+    Το vm είναι το logical name του VM (key του vm_ids) όπου γίνεται το attach.
   EOT
   type = map(object({
+    vm           = string
     disk_size_gb = number
     lun          = number
     disk_type    = optional(string, "Premium_LRS")
     caching      = optional(string, "ReadWrite")
-    name         = optional(string) # αν λείπει, παράγεται από vm_name + key
+    name         = optional(string) # αν λείπει, παράγεται από vm + key
   }))
   default = {}
 
   validation {
-    condition     = length(distinct([for d in var.disks : d.lun])) == length(var.disks)
-    error_message = "Κάθε disk πρέπει να έχει μοναδικό lun."
+    condition = alltrue([
+      for vm in distinct([for d in var.disks : d.vm]) :
+      length(distinct([for d in var.disks : d.lun if d.vm == vm])) == length([for d in var.disks : d.lun if d.vm == vm])
+    ])
+    error_message = "Τα lun πρέπει να είναι μοναδικά ΑΝΑ VM (δύο VMs μπορούν κάλλιστα να έχουν lun 0)."
   }
 
   validation {
@@ -24,14 +29,10 @@ variable "disks" {
   }
 }
 
-variable "vm_name" {
-  description = "Όνομα του VM — μπαίνει στο default naming των δίσκων."
-  type        = string
-}
-
-variable "vm_id" {
-  description = "Resource id του VM όπου γίνεται το attachment."
-  type        = string
+variable "vm_ids" {
+  description = "Map logical name => VM id, από το output vm_ids του vm module."
+  type        = map(string)
+  default     = {}
 }
 
 variable "resource_group_name" {
