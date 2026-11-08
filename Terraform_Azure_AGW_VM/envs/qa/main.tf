@@ -59,28 +59,15 @@ module "vm" {
   vm_size             = var.vm_size
 }
 
-module "disk" {
+module "disks" {
   source = "../../modules/disk"
 
   vm_name             = var.vm_name
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
   vm_id               = module.vm.vm_id
-  disk_size_gb        = var.disk_size_gb
-  disk_type           = var.disk_type
-  lun                 = 0
-}
-
-module "disk2" {
-  source = "../../modules/disk"
-
-  vm_name             = "${var.vm_name}-2"
-  resource_group_name = module.rg.rg_name
-  location            = module.rg.rg_location
-  vm_id               = module.vm.vm_id
-  disk_size_gb        = var.disk2_size_gb
-  disk_type           = var.disk2_type
-  lun                 = 1
+  disks               = var.disks
+  tags                = var.tags
 }
 
 module "agw" {
