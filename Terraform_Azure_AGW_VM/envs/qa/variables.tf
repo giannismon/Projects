@@ -35,18 +35,14 @@ variable "private_ip" {
   type = string
 }
 
-variable "disk_size_gb" {
-  type = number
-}
-
-variable "disk_type" {
-  type = string
-}
-
-variable "disk2_size_gb" {
-  type = number
-}
-
-variable "disk2_type" {
-  type = string
+variable "disks" {
+  description = "Data disks του VM, keyed by logical name (disk1, disk2, ...)."
+  type = map(object({
+    disk_size_gb = number
+    lun          = number
+    disk_type    = optional(string, "Premium_LRS")
+    caching      = optional(string, "ReadWrite")
+    name         = optional(string)
+  }))
+  default = {}
 }

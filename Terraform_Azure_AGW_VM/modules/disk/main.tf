@@ -1,15 +1,20 @@
 resource "azurerm_managed_disk" "disk" {
-  name                 = "disk-p44010-${var.vm_name}"
+  for_each = var.disks
+
+  name                 = coalesce(each.value.name, "disk-p44010-${var.vm_name}-${each.key}")
   location             = var.location
   resource_group_name  = var.resource_group_name
-  storage_account_type = var.disk_type
+  storage_account_type = each.value.disk_type
   create_option        = "Empty"
-  disk_size_gb         = var.disk_size_gb
+  disk_size_gb         = each.value.disk_size_gb
+  tags                 = var.tags
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "attachment" {
-  managed_disk_id    = azurerm_managed_disk.disk.id
+  for_each = azurerm_managed_disk.disk
+
+  managed_disk_id    = each.value.id
   virtual_machine_id = var.vm_id
-  lun                = var.lun
-  caching            = "ReadWrite"
+  lun                = var.disks[each.key].lun
+  caching            = var.disks[each.key].caching
 }

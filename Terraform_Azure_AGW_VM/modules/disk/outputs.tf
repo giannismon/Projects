@@ -1,7 +1,9 @@
-output "disk_id" {
-  value = azurerm_managed_disk.disk.id
+output "disk_ids" {
+  description = "Map logical name => managed disk id."
+  value       = { for k, d in azurerm_managed_disk.disk : k => d.id }
 }
 
-output "disk_name" {
-  value = azurerm_managed_disk.disk.name
+output "disk_names" {
+  description = "Map logical name => managed disk name."
+  value       = { for k, d in azurerm_managed_disk.disk : k => d.name }
 }

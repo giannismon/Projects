@@ -6,12 +6,9 @@ output "vm_private_ip" {
   value = module.vm.private_ip
 }
 
-output "disk_name" {
-  value = module.disk.disk_name
-}
-
-output "disk2_name" {
-  value = module.disk2.disk_name
+output "disk_names" {
+  description = "Map logical name => managed disk name."
+  value       = module.disks.disk_names
 }
 
 output "agw_public_ip" {
