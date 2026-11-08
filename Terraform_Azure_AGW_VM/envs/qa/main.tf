@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.3"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -27,6 +29,7 @@ resource "azurerm_user_assigned_identity" "agw_identity" {
   name                = "id-agw"
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
+  tags                = var.tags
 }
 
 module "keyvault" {
@@ -35,8 +38,27 @@ module "keyvault" {
   kv_name             = var.kv_name
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
-  admin_password      = var.admin_password
-  agw_principal_id    = azurerm_user_assigned_identity.agw_identity.principal_id
+  tags                = var.tags
+
+  secrets = {
+    "vm-admin-password" = {
+      value = var.admin_password
+    }
+  }
+
+  certificates = {
+    "agw-ssl-cert" = {
+      subject = "CN=agw-p44010"
+    }
+  }
+
+  access_policies = {
+    agw = {
+      object_id               = azurerm_user_assigned_identity.agw_identity.principal_id
+      secret_permissions      = ["Get"]
+      certificate_permissions = ["Get"]
+    }
+  }
 }
 
 module "networking" {
@@ -44,42 +66,54 @@ module "networking" {
 
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
+  address_space       = var.address_space
+  subnets             = var.subnets
+  tags                = var.tags
 }
 
-module "vm" {
+module "vms" {
   source = "../../modules/vm"
 
-  vm_name             = var.vm_name
+  vms                 = var.vms
+  subnet_id           = module.networking.subnet_ids["vm"]
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
-  subnet_id           = module.networking.vm_subnet_id
-  private_ip          = var.private_ip
   admin_username      = var.admin_username
-  admin_password      = module.keyvault.vm_password
-  vm_size             = var.vm_size
+  admin_password      = module.keyvault.secret_values["vm-admin-password"]
+  tags                = var.tags
 }
 
 module "disks" {
   source = "../../modules/disk"
 
-  vm_name             = var.vm_name
+  disks               = var.disks
+  vm_ids              = module.vms.vm_ids
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
-  vm_id               = module.vm.vm_id
-  disks               = var.disks
   tags                = var.tags
 }
 
 module "agw" {
   source = "../../modules/agw"
 
-  agw_name                  = "main"
-  resource_group_name       = module.rg.rg_name
-  location                  = module.rg.rg_location
-  agw_subnet_id             = module.networking.agw_subnet_id
-  vm_private_ip             = module.vm.private_ip
-  ssl_certificate_secret_id = module.keyvault.ssl_certificate_secret_id
-  identity_id               = azurerm_user_assigned_identity.agw_identity.id
+  agw_name            = "main"
+  resource_group_name = module.rg.rg_name
+  location            = module.rg.rg_location
+  agw_subnet_id       = module.networking.subnet_ids["agw"]
+  identity_id         = azurerm_user_assigned_identity.agw_identity.id
+  tags                = var.tags
+
+  backend_pools = {
+    "agw-backend-pool" = {
+      ip_addresses = values(module.vms.private_ips)
+    }
+  }
+
+  ssl_certificates = {
+    "agw-ssl-cert" = {
+      key_vault_secret_id = module.keyvault.certificate_secret_ids["agw-ssl-cert"]
+    }
+  }
 }
 
 module "bastion" {
@@ -87,5 +121,6 @@ module "bastion" {
 
   resource_group_name = module.rg.rg_name
   location            = module.rg.rg_location
-  bastion_subnet_id   = module.networking.bastion_subnet_id
+  bastion_subnet_id   = module.networking.subnet_ids["bastion"]
+  tags                = var.tags
 }
