@@ -124,3 +124,4 @@ module "bastion" {
   bastion_subnet_id   = module.networking.subnet_ids["bastion"]
   tags                = var.tags
 }
+###################################################################################################################
