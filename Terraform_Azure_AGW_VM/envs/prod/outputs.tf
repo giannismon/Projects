@@ -32,3 +32,4 @@ output "bastion_public_ip" {
   description = "Public IP of the Bastion host."
   value       = module.bastion.bastion_public_ip
 }
+1
